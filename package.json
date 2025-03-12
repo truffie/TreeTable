@@ -2,8 +2,10 @@
   "name": "web-template",
   "version": "1.0.0",
   "author": "rikzun",
+  "homepage": "https://truffie.github.io/treeTable",
   "scripts": {
     "start": "webpack serve --progress",
+    "deploy": "gh-pages -d build",
     "build": "webpack build --progress"
   },
   "dependencies": {
@@ -25,6 +27,7 @@
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^6.9.1",
+    "gh-pages": "^6.3.0",
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.6.1",
     "react-refresh-typescript": "^2.0.7",

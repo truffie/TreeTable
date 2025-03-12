@@ -17,7 +17,6 @@ import { useEffect, useState, useCallback } from 'react';
 import Table from '../Table/Table';
 
 //toast import
-import { toast } from 'react-toastify';
 import { ToastNotification } from '../ToastNotification/ToastNotification';
 import { Typography } from '@mui/material';
 
