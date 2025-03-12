@@ -1,0 +1,10 @@
+@use '@styles/variables' as *;
+
+.toast {
+  > div {
+    background-color: $primary-light;
+  }
+  > svg {
+    fill: $text-light;
+  }
+}

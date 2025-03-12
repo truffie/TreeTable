@@ -1,0 +1,62 @@
+@use '@styles/variables' as *;
+
+.container {
+  width: 100%;
+  align-self: start;
+  padding: 0 1rem;
+  background-color: $primary-light;
+  border-right: 1px solid $border-main;
+  border-bottom: 1px solid $border-main;
+  display: flex;
+
+  &.contentTop {
+    justify-content: space-between;
+    height: 51px;
+    .textContainer {
+      align-self: center;
+
+      .text {
+        color: $text-main;
+        line-height: normal;
+      }
+    }
+
+    .action {
+      align-self: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-image: url('../../aseets/icons/chevron-down.svg');
+    }
+  }
+
+  &.contentDown {
+    flex: auto;
+    flex-direction: column;
+    padding: 0;
+
+    .text {
+      color: $text-light;
+    }
+
+    .itemWrapper {
+      cursor: pointer;
+      display: flex;
+      gap: 1rem;
+      padding: 0.5rem 1rem;
+
+      &:hover {
+        background-color: $tab-secondary;
+      }
+      &.active {
+        background-color: $tab-active;
+      }
+    }
+
+    .itemIcon {
+      align-self: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-image: url('../../aseets/icons/blocks.svg');
+    }
+  }
+}

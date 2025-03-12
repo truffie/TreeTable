@@ -1,0 +1,121 @@
+@use '@styles/variables' as *;
+
+.table {
+  --spacing: 30px;
+  --radius: 10px;
+  --height: 63px;
+  width: 100%;
+  border-collapse: collapse;
+  background-color: $primary-main;
+  font-family: inherit;
+
+  .head {
+    tr {
+      border-bottom: 2px solid $border-main;
+
+      th {
+        color: $text-main;
+        padding: 1rem 0.5rem;
+        text-align: left;
+        background-color: transparent;
+
+        &:nth-child(2) {
+          width: 40%;
+        }
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid $border-main;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.03);
+      }
+
+      td {
+        vertical-align: middle;
+        max-height: var(--height);
+        height: var(--height);
+        color: $text-light;
+        padding: 1rem;
+      }
+
+      .editingCell {
+        padding: 0 m !important;
+        margin: 0;
+        color: $text-main;
+        &::before {
+          display: none;
+        }
+
+        &::after {
+          display: none;
+        }
+      }
+
+      td.treeCell {
+        display: flex;
+        align-items: center;
+        position: relative;
+        vertical-align: auto;
+
+        .treeToggle {
+          position: absolute;
+
+          background-color: $primary-main;
+          display: flex;
+          left: calc(var(--spacing) - var(--radius));
+          gap: 0.125rem;
+          align-items: center;
+          border-radius: 4px;
+          &:hover {
+            z-index: 99;
+            background-color: $primary-lighter;
+
+            .fileIcon {
+              margin: 0;
+            }
+
+            .hoverIcon {
+              display: block;
+            }
+          }
+
+          .hoverIcon {
+            display: none;
+            background-color: transparent;
+
+            &.fileIcon {
+              background-color: transparent;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.fileIcon {
+  cursor: pointer;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-image: url('../../aseets/icons/file.svg');
+  background-color: transparent;
+}
+.hoverIcon {
+  cursor: pointer;
+
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-image: url('../../aseets/icons/trash.svg');
+  background-color: transparent;
+}

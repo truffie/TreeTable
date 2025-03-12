@@ -1,0 +1,35 @@
+@use '@styles/variables' as *;
+
+.container {
+  background-color: $primary-light;
+  border-bottom: 1px solid $border-main;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1rem;
+  .icon {
+    background-repeat: no-repeat;
+    background-size: contain;
+    &-menu {
+      background-image: url('../../aseets/icons/menu.svg');
+    }
+    &-arrow-left {
+      background-image: url('../../aseets/icons/arrow-left.svg');
+    }
+  }
+  .list {
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 0;
+    &__item {
+      flex: 0;
+      text-align: center;
+      color: $text-main;
+
+      &-active {
+        color: $text-light;
+        border-bottom: 2px solid $border-active;
+      }
+    }
+  }
+}
