@@ -33,7 +33,7 @@ module.exports = () => {
       },
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.css', '.scss', '.sass'],
       fallback: { process: false },
-      modules: [__dirname, 'node_modules'],
+      modules: [path.resolve(__dirname, 'node_modules'), 'node_modules'],
     },
     devServer: {
       hot: true,
@@ -41,12 +41,24 @@ module.exports = () => {
       compress: true,
       port: 3000,
       historyApiFallback: true,
+      watchOptions: {
+        ignored: /node_modules/,
+      },
     },
     module: {
       rules: [
         {
           test: /\.[jt]sx?$/,
-          use: ['ts-loader'],
+          exclude: /node_modules/,
+          use: [
+            {
+              loader: 'ts-loader',
+              options: {
+                transpileOnly: true,
+                experimentalFileCaching: true,
+              },
+            },
+          ],
         },
         {
           test: /\.s?[ca]ss$/i,
@@ -94,19 +106,17 @@ module.exports = () => {
       }),
       new TsconfigPathsPlugin(),
     ],
+    cache: {
+      type: 'filesystem',
+      cacheDirectory: path.resolve(__dirname, '.temp_cache'),
+    },
   };
 
   if (IS_DEVELOPMENT && IS_SERVE) {
     config.plugins.push(new ReactRefreshWebpackPlugin());
-    config.module.rules[0].use[0] = {
-      loader: 'ts-loader',
-      options: {
-        getCustomTransformers: () => ({
-          before: [ReactRefreshTypeScript()],
-        }),
-        transpileOnly: true,
-      },
-    };
+    config.module.rules[0].use[1].options.getCustomTransformers = () => ({
+      before: [ReactRefreshTypeScript()],
+    });
   }
 
   return config;
