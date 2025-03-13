@@ -66,4 +66,9 @@ export type TreeResponse = {
   total?: number;
 };
 
-export type TableDataType = TreeResponse;
+export type TableDataType = TreeResponse & {
+  isNew?: boolean
+  parentId?: number
+}
+
+

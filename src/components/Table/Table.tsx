@@ -14,6 +14,7 @@ import {
   TableDataType,
   RecalculatedRows,
   OutlayRowUpdateRequest,
+  OutlayRowRequest,
 } from '@/types';
 
 //mui import
@@ -38,7 +39,10 @@ export default function Table({
 }: {
   columns: ColumnDef<TableDataType>[];
   data: TableDataType[];
-  onAddSubRow: (rowId: number) => Promise<RecalculatedRows | undefined>;
+  onAddSubRow: (
+    rowId: number,
+    data: TableDataType
+  ) => Promise<RecalculatedRows | undefined>;
   onSaveRow: (
     rowId: number,
     updatedData: OutlayRowUpdateRequest
@@ -56,8 +60,11 @@ export default function Table({
   }, [data]);
 
   //handlers
-  const handleDelete = (rowId: number) => {
-    onDeleteRow(rowId);
+  const handleDelete = (rowId: number, isNew: boolean) => {
+    if (!isNew) {
+      onDeleteRow(rowId);
+    }
+
     setLocalData(prev => removeRowById(prev, rowId));
     setUnsavedRows(prev => {
       const updated = new Set(prev);
@@ -70,18 +77,12 @@ export default function Table({
       if (editingRowId === rowId || unsavedRows.has(rowId)) {
         return;
       }
-      try {
-        const data = await onAddSubRow(rowId);
-        if (data?.current) {
-          const newRow = createDefaultRow(data);
 
-          setLocalData(prev => updateTreeWithNewChild(prev, rowId, newRow));
-          setEditingRowId(newRow.id as number);
-          setUnsavedRows(prev => new Set(prev).add(newRow.id as number));
-        }
-      } catch (error) {
-        console.error('Error adding child row:', error);
-      }
+      const newRow = createDefaultRow(rowId);
+
+      setLocalData(prev => updateTreeWithNewChild(prev, rowId, newRow));
+      setEditingRowId(newRow.id as number);
+      setUnsavedRows(prev => new Set(prev).add(newRow.id as number));
     },
     [editingRowId, onAddSubRow, unsavedRows]
   );
@@ -95,20 +96,36 @@ export default function Table({
   );
   //TODO add validation
   const handleSave = useCallback(
-    async (rowId: number, updatedData: OutlayRowUpdateRequest) => {
+    async (rowId: number, unsavedData: OutlayRowUpdateRequest) => {
       try {
         const prevData = findRowRecursively(localData, rowId);
-        const data = await onSaveRow(rowId, { ...prevData, ...updatedData });
 
-        if (data) {
-          setLocalData(prev => {
-            const updatedData = updateRowRecursively(
-              prev,
-              rowId,
-              data.current as TableDataType
-            );
-            return updatedData;
-          });
+        if (prevData?.isNew && prevData?.parentId) {
+          const data = await onAddSubRow(rowId, unsavedData as TableDataType);
+
+          if (data) {
+            setLocalData(prev => {
+              const updatedData = updateRowRecursively(
+                prev,
+                rowId,
+                data.current as TableDataType
+              );
+              return updatedData;
+            });
+          }
+        } else {
+          const data = await onSaveRow(rowId, { ...prevData, ...unsavedData });
+
+          if (data) {
+            setLocalData(prev => {
+              const updatedData = updateRowRecursively(
+                prev,
+                rowId,
+                data.current as TableDataType
+              );
+              return updatedData;
+            });
+          }
         }
 
         setUnsavedRows(prev => {
@@ -134,9 +151,14 @@ export default function Table({
       if (e.key === 'Enter') {
         const currentRow = findRowRecursively(localData, rowId);
         if (currentRow) {
+          let validatedValue: string | number = currentValue;
+          if (!isNaN(Number(currentValue))) {
+            validatedValue = parseFloat(currentValue);
+          }
+
           const updatedData = {
             ...currentRow,
-            [fieldName]: currentValue,
+            [fieldName]: validatedValue,
           } as OutlayRowUpdateRequest;
 
           handleSave(rowId, updatedData);
@@ -253,7 +275,10 @@ export default function Table({
                           className={styles.hoverIcon}
                           sx={{ display: 'none' }}
                           onClick={() =>
-                            handleDelete(row.original.id as number)
+                            handleDelete(
+                              row.original.id as number,
+                              row.original.isNew as boolean
+                            )
                           }
                         />
                       </div>
