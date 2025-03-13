@@ -41,8 +41,10 @@ module.exports = () => {
       compress: true,
       port: 3000,
       historyApiFallback: true,
-      watchOptions: {
-        ignored: /node_modules/,
+      static: {
+        watch: {
+          ignored: /node_modules/,
+        },
       },
     },
     module: {
@@ -89,7 +91,7 @@ module.exports = () => {
         patterns: [
           {
             from: PATH_PUBLIC_FOLDER,
-            filter: filepath => {
+            filter: (filepath) => {
               switch (
                 path
                   .normalize(filepath)
@@ -114,9 +116,14 @@ module.exports = () => {
 
   if (IS_DEVELOPMENT && IS_SERVE) {
     config.plugins.push(new ReactRefreshWebpackPlugin());
-    config.module.rules[0].use[1].options.getCustomTransformers = () => ({
-      before: [ReactRefreshTypeScript()],
-    });
+
+    // Modify the ts-loader options directly
+    config.module.rules[0].use[0].options = {
+      ...config.module.rules[0].use[0].options, // Preserve existing options
+      getCustomTransformers: () => ({
+        before: [ReactRefreshTypeScript()],
+      }),
+    };
   }
 
   return config;
