@@ -4,8 +4,13 @@
   "author": "rikzun",
   "homepage": "https://truffie.github.io/treeTable",
   "scripts": {
+    "predeploy": "npm run build",
+    "pages-deploy": "gh-pages -d build",
+    "react-start": "react-scripts start",
+    "react-build": "react-scripts build",
+    "react-test": "react-scripts test",
+    "react-eject": "react-scripts eject",
     "start": "webpack serve --progress",
-    "deploy": "gh-pages -d build",
     "build": "webpack build --progress"
   },
   "dependencies": {

@@ -9,9 +9,6 @@ import {
   RecalculatedRows,
 } from '@/types';
 
-//mui import
-import { ColumnDef } from '@tanstack/react-table';
-
 //hooks import
 import { useEffect, useState, useCallback } from 'react';
 import Table from '../Table/Table';
@@ -20,48 +17,7 @@ import Table from '../Table/Table';
 import { ToastNotification } from '../ToastNotification/ToastNotification';
 import { Typography } from '@mui/material';
 
-// Constants
-const DEFAULT_ROW_VALUES = {
-  rowName: '',
-  equipmentCosts: 0,
-  estimatedProfit: 0,
-  overheads: 0,
-  salary: 0,
-  machineOperatorSalary: 0,
-  mainCosts: 0,
-  materials: 0,
-  mimExploitation: 0,
-  supportCosts: 0,
-};
-
-// Columns
-const TABLE_COLUMNS: ColumnDef<TableDataType>[] = [
-  {
-    header: 'Уровень',
-    accessorKey: 'level',
-    cell: info => info.renderValue(),
-  },
-  {
-    header: 'Наименование работы',
-    accessorKey: 'rowName',
-  },
-  {
-    header: 'Основная з/п',
-    accessorKey: 'salary',
-  },
-  {
-    header: 'Оборудование',
-    accessorKey: 'equipmentCosts',
-  },
-  {
-    header: 'Накладные расходы',
-    accessorKey: 'overheads',
-  },
-  {
-    header: 'Сметная прибыль',
-    accessorKey: 'estimatedProfit',
-  },
-];
+import { TABLE_COLUMNS } from '../../constants';
 
 export function ReportTable() {
   const [fetchedData, setFetchedData] = useState<TableDataType[]>([]);
@@ -74,11 +30,11 @@ export function ReportTable() {
   const handleError = useCallback((message: string, statusCode?: number) => {
     setToastMessage(message);
     setToastStatusCode(statusCode);
-    
+
     setTimeout(() => {
       setToastMessage('');
       setToastStatusCode(undefined);
-    }, 100); 
+    }, 100);
   }, []);
 
   const getTreeRows = useCallback(async () => {
@@ -102,11 +58,14 @@ export function ReportTable() {
   }, [getTreeRows]);
 
   const handleAddSubRow = useCallback(
-    async (parentId: number): Promise<RecalculatedRows | undefined> => {
+    async (
+      parentId: number,
+      data: TableDataType
+    ): Promise<RecalculatedRows | undefined> => {
       try {
         const rowData: OutlayRowRequest = {
           parentId,
-          ...DEFAULT_ROW_VALUES,
+          ...data,
         };
         return await createRow(rowData);
       } catch (error: any) {

@@ -1,4 +1,9 @@
-import { TableDataType, OutlayRowUpdateRequest, RecalculatedRows } from '@/types';
+import { DEFAULT_ROW_VALUES } from './../constants/index';
+import {
+  TableDataType,
+  OutlayRowUpdateRequest,
+  RecalculatedRows,
+} from '@/types';
 
 export const removeRowById = (
   rows: TableDataType[],
@@ -34,7 +39,6 @@ export const updateTreeWithNewChild = (
   });
 };
 
-
 export const updateRowRecursively = (
   rows: TableDataType[],
   rowId: number,
@@ -68,14 +72,13 @@ export const findRowRecursively = (
   return undefined;
 };
 
-export const createDefaultRow = (data: RecalculatedRows): TableDataType => {
+export const createDefaultRow = (rowId: number): TableDataType => {
   return {
-    ...(data.current as TableDataType),
-    rowName: '',
-    salary: 0,
-    equipmentCosts: 0,
-    overheads: 0,
-    estimatedProfit: 0,
+    id: Date.now(),
+    parentId: rowId,
+    ...DEFAULT_ROW_VALUES,
+    child: [],
+    isNew: true
   };
 };
 
@@ -83,7 +86,10 @@ export const handleRowSave = async (
   rowId: number,
   updatedData: OutlayRowUpdateRequest,
   localData: TableDataType[],
-  onSaveRow: (rowId: number, data: OutlayRowUpdateRequest) => Promise<RecalculatedRows | undefined>
+  onSaveRow: (
+    rowId: number,
+    data: OutlayRowUpdateRequest
+  ) => Promise<RecalculatedRows | undefined>
 ): Promise<TableDataType[] | undefined> => {
   try {
     const data = await onSaveRow(rowId, updatedData);
